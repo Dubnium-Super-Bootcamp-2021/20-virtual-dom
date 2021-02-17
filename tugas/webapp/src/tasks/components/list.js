@@ -6,7 +6,7 @@ import { ButtonList } from './button';
 export const TaskList = Vue.extend({
   props: ['tasks'],
   components: {
-    buttonTask: ButtonList,
+    ButtonList: ButtonList,
   },
   render(CreateElement) {
     const taskList = this.$props?.tasks?.map((task) => {
@@ -30,7 +30,7 @@ export const TaskList = Vue.extend({
               { style: { color: 'green' } },
               'Sudah selesai'
             )
-          : CreateElement('buttonTask', { props: { task: task } }),
+          : CreateElement('ButtonList', { props: { task: task } }),
       ]);
     });
     return CreateElement('div', taskList);

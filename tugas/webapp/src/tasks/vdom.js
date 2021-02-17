@@ -1,16 +1,19 @@
 require('./main.css');
 import Vue from 'vue';
-import { done, cancel, getList, add, getWorkersList } from './async-action';
+import { getList, add, getWorkersList } from './async-action';
 import { store$, errorAction, clearErrorAction } from './store';
 import { TaskList } from './components/list';
+import { InputTask } from './components/input';
 
 new Vue({
   el: '#task',
   components: {
-    'list-task': TaskList,
+    'TaskList': TaskList,
+    'InputTask': InputTask,
   },
   render(CreateElement) {
     this.tasks = this.loadTask?.tasks;
+    // this.workers = this.loadTask?.workers;
     return CreateElement('div', [
       CreateElement('ul', [
         CreateElement('li', [
@@ -51,58 +54,31 @@ new Vue({
       CreateElement(
         'p',
         {
-          class: { error: this.loadSummary?.error },
+          class: { error: this.loadTask?.error },
         },
-        this.loadSummary?.error
+        this.loadTask?.error
       ),
       CreateElement(
         'p',
         {
-          class: { primary: this.loadSummary?.loading },
+          class: { primary: this.loadTask?.loading },
         },
-        this.loadSummary?.loading ? 'memuat . . .' : ''
+        this.loadTask?.loading ? 'memuat . . .' : ''
       ),
       CreateElement('h4', 'Buat tugas baru'),
-      CreateElement('form', [
-        CreateElement('label', 'Nama:'),
-        CreateElement('br'),
-        CreateElement('textarea', {
-          attrs: {
-            name: 'job',
-            placeholder: 'Deskripsi pekerjaan',
-            cols: '30',
-            rows: '3',
-          },
-        }),
-        CreateElement('br'),
-        CreateElement('label', 'Pekerja:'),
-        CreateElement('br'),
-        CreateElement('select', {
-          attrs: {
-            name: 'assignee',
-          },
-        }),
-        CreateElement('br'),
-        CreateElement('label', 'Lampiran:'),
-        CreateElement('input', {
-          attrs: {
-            type: 'file',
-            name: 'attachment',
-          },
-        }),
-        CreateElement('br'),
-        CreateElement('button', 'kirim'),
-      ]),
+      CreateElement('InputTask', { props: { workers: this.loadTask?.workers } }),
       CreateElement('h4', 'Daftar tugas'),
       CreateElement('hr'),
-      CreateElement('list-task', { props: { tasks: this.tasks } }),
+      CreateElement('TaskList', { props: { tasks: this.tasks } }),
     ]);
   },
   data: {
-    loadTask: {},
+    loadTask: {
+      workers: [],
+    },
     tasks: [],
+    // workers: [],
   },
-  methods: {},
   mounted() {
     this.loadTask = store$.getState();
     store$.subscribe(() => {
